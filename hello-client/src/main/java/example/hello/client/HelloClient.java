@@ -30,8 +30,8 @@ public class HelloClient {
                 .block();
 
         // Create the tracing identifiers to send in the metadata
-        final String traceId = traceId();
-        final String spanId = spanId();
+        final String traceId = randomHex(16);
+        final String spanId = randomHex(8);
 
         // Create the composite metadata
         final CompositeByteBuf compositeMetadata = buildCompositeMetadata(traceId, spanId);
@@ -91,28 +91,15 @@ public class HelloClient {
     }
 
     /**
-     * Generates a random traceId.
+     * Generates random lowercase hex string of specified length.
      *
-     * @return trace identifier
+     * @param length length of string in bytes
+     * @return random hex string
      */
-    private static String traceId() {
+    private static String randomHex(int length) {
         Random rand = new Random(System.currentTimeMillis());
 
-        byte[] bytes = new byte[16];
-        rand.nextBytes(bytes);
-
-        return Hex.encodeHexString(bytes).toLowerCase();
-    }
-
-    /**
-     * Generates a random spanId.
-     *
-     * @return span identifier
-     */
-    private static String spanId() {
-        Random rand = new Random(System.currentTimeMillis());
-
-        byte[] bytes = new byte[8];
+        byte[] bytes = new byte[length];
         rand.nextBytes(bytes);
 
         return Hex.encodeHexString(bytes).toLowerCase();

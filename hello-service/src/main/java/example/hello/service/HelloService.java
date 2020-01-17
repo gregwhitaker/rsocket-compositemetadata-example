@@ -7,12 +7,15 @@ import io.rsocket.RSocket;
 import io.rsocket.RSocketFactory;
 import io.rsocket.SocketAcceptor;
 import io.rsocket.frame.decoder.PayloadDecoder;
+import io.rsocket.metadata.CompositeMetadata;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import io.rsocket.util.DefaultPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +23,7 @@ import java.util.Map;
  */
 public class HelloService {
     private static final Logger LOG = LoggerFactory.getLogger(HelloService.class);
-    private static final String MESSAGE_FORMAT = "Hello, %s!";
+    private static final String MESSAGE_FORMAT = "Hello, %s! [traceId: '%s', spanId: '%s']";
 
     public static void main(String... args) throws Exception {
         RSocketFactory.receive()
@@ -34,9 +37,14 @@ public class HelloService {
                                 final String name = payload.getDataUtf8();
                                 final Map<String, Object> metadata = parseMetadata(payload);
 
-                                LOG.info("Sending message: {}", String.format(MESSAGE_FORMAT, name));
+                                final String response = String.format(MESSAGE_FORMAT,
+                                        name,
+                                        metadata.getOrDefault("messaging/x.traceId", ""),
+                                        metadata.getOrDefault("messaging/x.spanId", ""));
 
-                                return Mono.just(DefaultPayload.create(String.format(MESSAGE_FORMAT, name)));
+                                LOG.info("Sending message: {}", response);
+
+                                return Mono.just(DefaultPayload.create(response.getBytes()));
                             }
                         });
                     }
@@ -57,7 +65,17 @@ public class HelloService {
      * @return a map containing the composite metadata entries
      */
     private static Map<String, Object> parseMetadata(Payload payload) {
-        return null;
+        Map<String, Object> metadataMap = new HashMap<>();
+
+        CompositeMetadata compositeMetadata = new CompositeMetadata(payload.metadata(), true);
+        compositeMetadata.forEach(entry -> {
+            byte[] bytes = new byte[entry.getContent().readableBytes()];
+            entry.getContent().readBytes(bytes);
+
+            metadataMap.put(entry.getMimeType(), new String(bytes, StandardCharsets.UTF_8));
+        });
+
+        return metadataMap;
     }
 }
 

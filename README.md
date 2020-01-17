@@ -1,4 +1,8 @@
 # rsocket-compositemetadata-example
+An example of sending composite metadata with [RSocket](http://rsocket.io).
+
+In this example the `hello-client` sends a request to receive a hello message along with some tracing metadata to the `hello-service`. 
+The service responds with a hello message and echoes the metadata back.
 
 ## Building the Example
 Run the following command to build the example:

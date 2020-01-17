@@ -1,5 +1,34 @@
 # rsocket-compositemetadata-example
 
+## Building the Example
+Run the following command to build the example:
+
+    ./gradlew clean build
+
+## Running the Example
+Follow the steps below to run the example:
+
+1. Run the following command to start the `hello-service`:
+
+        ./gradlew :hello-service:run
+        
+    If the service has started successfully you will see the following in the terminal:
+    
+        > Task :hello-service:run
+        [main] INFO example.hello.service.HelloService - RSocket server started on port: 7000
+        
+2. In a new terminal, run the following command to send a hello request, with tracing metadata, using the `hello-client`:
+
+        ./gradlew :hello-client:run --args=Bob
+        
+    If successful, you will see the following in your terminal:
+    
+        Sending request for 'Bob' [traceId: '7b34def1040fa567764848d468a6f876', spanId: '9da1e7f0427747b4']
+        Response: Hello, Bob! [traceId: '7b34def1040fa567764848d468a6f876', spanId: '9da1e7f0427747b4']
+
+## Bugs and Feedback
+For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/rsocket-compositemetadata-example/issues).
+
 ## License
 MIT License
 

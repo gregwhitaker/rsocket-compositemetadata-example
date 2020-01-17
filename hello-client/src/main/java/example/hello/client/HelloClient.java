@@ -24,6 +24,7 @@ public class HelloClient {
     public static void main(String... args) {
         final String name = getNameFromArgs(args);
 
+        // Create RSocket connection to hello-service
         RSocket rSocket = RSocketFactory.connect()
                 .transport(TcpClientTransport.create(7000))
                 .start()

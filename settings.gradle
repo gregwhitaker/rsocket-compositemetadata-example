@@ -1,0 +1,4 @@
+rootProject.name = 'rsocket-compositemetadata-example'
+include 'hello-service'
+include 'hello-client'
+

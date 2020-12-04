@@ -1,4 +1,6 @@
 # rsocket-compositemetadata-example
+![Build](https://github.com/gregwhitaker/rsocket-compositemetadata-example/workflows/Build/badge.svg)
+
 An example of sending composite metadata with [RSocket](http://rsocket.io).
 
 In this example the `hello-client` sends a request to receive a hello message along with some tracing metadata to the `hello-service`. 
